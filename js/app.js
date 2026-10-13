@@ -1,6 +1,6 @@
-import { LEVELS, GAME_NAMES, FLUENCY, CHEERS, SESSION_PLAN } from './data.js';
-import * as S from './store.js';
-import { speak, canSpeak, hasSwedishVoice, ding, stop } from './speech.js';
+// Vanligt skript: LEVELS m.fl. kommer från data.js, Store från store.js, Speech från speech.js.
+const S = Store;
+const { speak, canSpeak, hasSwedishVoice, ding, stop } = Speech;
 
 // ---------- state ----------
 const state = S.load(localStorage);

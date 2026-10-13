@@ -1,6 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { LEVELS, GAME_NAMES, SESSION_PLAN } from '../js/data.js';
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const {LEVELS, GAME_NAMES, SESSION_PLAN} = require('../js/data.js');
 
 test('nivåer har unika id och rimlig storlek', () => {
   const ids = LEVELS.map(l => l.id);

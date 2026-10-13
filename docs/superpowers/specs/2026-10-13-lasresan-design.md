@@ -40,7 +40,9 @@ på sprakforskning.se.
 
 ## 3. Arkitektur
 
-Statisk sajt utan byggsteg (GitHub Pages serverar `main` root).
+Statisk sajt utan byggsteg (GitHub Pages serverar `main` root). Vanliga
+`<script src>` i beroendeordning, inga ES-moduler: Chrome blockerar moduler
+från `file://`, och appen ska gå att öppna direkt från disk.
 
 ```
 index.html          skal + vyer

@@ -1,10 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import {
-  emptyState, migrateV1, load, save, KEY, V1_KEY,
-  repeatQueue, pickWords, spellingTiles, checkSpelling,
-  weekMinutes, streakDays, levelStats, troubleWords, levelMastery, toCsv,
-} from '../js/store.js';
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const { emptyState, migrateV1, load, save, KEY, V1_KEY, repeatQueue, pickWords, spellingTiles, checkSpelling, weekMinutes, streakDays, levelStats, troubleWords, levelMastery, toCsv } = require('../js/store.js');
 
 const W = [{ w: 'sol', p: ['s','o','l'], e: '☀️' }, { w: 'bil', p: ['b','i','l'], e: '🚗' }, { w: 'ros', p: ['r','o','s'], e: '🌹' }, { w: 'hus', p: ['h','u','s'], e: '🏠' }];
 const att = (word, result, ts, level = 'sol') => ({ ts, level, word, result, mode: 'words' });

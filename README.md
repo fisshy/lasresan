@@ -34,11 +34,7 @@ Fullständig designspec: `docs/superpowers/specs/2026-10-13-lasresan-design.md`.
 
 ## Köra lokalt
 
-```
-python -m http.server 8765
-```
-
-Öppna <http://127.0.0.1:8765/>. ES-moduler kräver en server, `file://` fungerar inte.
+Dubbelklicka på `index.html`. Appen använder vanliga `<script src>` (inga ES-moduler), så den fungerar direkt från disk via `file://` såväl som på GitHub Pages. Testerna i `test/static.test.mjs` vaktar att det förblir så.
 
 ## Tester
 

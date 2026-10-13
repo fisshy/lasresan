@@ -4,7 +4,7 @@
 // sedan flerstaviga och sammansatta ord, därefter svenskans kluriga ljud, sist texter.
 // Varje ord har: w = ordet, p = delar (ljud/stavelser/orddelar som läshjälp), e = bild.
 
-export const LEVELS = [
+const LEVELS = [
   {
     id: 'sol',
     title: 'Sola & ljuda',
@@ -364,7 +364,7 @@ export const LEVELS = [
   },
 ];
 
-export const GAME_NAMES = {
+const GAME_NAMES = {
   blend: 'Sätt ihop ljuden',
   segment: 'Hitta ljuden',
   swap: 'Byt ett ljud',
@@ -374,19 +374,21 @@ export const GAME_NAMES = {
   flash: 'Snabbord',
 };
 
-export const FLUENCY = [
+const FLUENCY = [
   { id: 'hackigt', label: 'Hackigt', emoji: '🐢' },
   { id: 'okej', label: 'Nästan flyt', emoji: '🚶' },
   { id: 'flyt', label: 'Flyt!', emoji: '🚀' },
 ];
 
-export const CHEERS = ['Toppen!', 'Wow, vilken läsare!', 'Du är på väg!', 'Snyggt ljudat!', 'Bra kämpat!', 'Det där satt!', 'Stjärnläsning!'];
+const CHEERS = ['Toppen!', 'Wow, vilken läsare!', 'Du är på väg!', 'Snyggt ljudat!', 'Bra kämpat!', 'Det där satt!', 'Stjärnläsning!'];
 
 // Passets uppbyggnad (minuter är riktvärden, forskningen pekar på 20–30 min/dag).
-export const SESSION_PLAN = [
+const SESSION_PLAN = [
   { id: 'repeat', title: 'Repetera', emoji: '🔁', minutes: 3, hint: 'Ord som behövde hjälp sist. Korrekt före snabbt.' },
   { id: 'sounds', title: 'Ljudlek', emoji: '👂', minutes: 3, hint: 'Visa först, gör sedan tillsammans, låt barnet göra själv.' },
   { id: 'words',  title: 'Läs ord', emoji: '📖', minutes: 6, hint: 'Barnet ljudar högt. Ge hjälp direkt om det fastnar.' },
   { id: 'text',   title: 'Läs text', emoji: '📜', minutes: 5, hint: 'Läs texten två gånger. Prata om vad den handlar om.' },
   { id: 'spell',  title: 'Stava', emoji: '✏️', minutes: 4, hint: 'Säg ordet, barnet ljudar och bygger. Rätta direkt.' },
 ];
+
+if (typeof module !== 'undefined') module.exports = { LEVELS, GAME_NAMES, FLUENCY, CHEERS, SESSION_PLAN };

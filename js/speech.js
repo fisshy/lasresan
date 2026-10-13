@@ -2,10 +2,11 @@
 // ordet samtidigt, och för att höra ordet vid stavning. Aldrig ett krav:
 // saknas svensk röst fungerar allt ändå, den vuxne säger ordet.
 
+const Speech = (() => {
 let voice = null;
 let loaded = false;
 
-export function canSpeak() {
+function canSpeak() {
   return typeof window !== 'undefined' && 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
 }
 
@@ -20,7 +21,7 @@ function pickVoice() {
   return voice;
 }
 
-export function hasSwedishVoice() {
+function hasSwedishVoice() {
   if (!loaded) pickVoice();
   return !!voice;
 }
@@ -30,7 +31,7 @@ if (canSpeak()) {
   window.speechSynthesis.addEventListener?.('voiceschanged', pickVoice);
 }
 
-export function speak(text, { rate = 0.85, pitch = 1.05 } = {}) {
+function speak(text, { rate = 0.85, pitch = 1.05 } = {}) {
   if (!canSpeak() || !text) return false;
   if (!loaded) pickVoice();
   try {
@@ -47,13 +48,13 @@ export function speak(text, { rate = 0.85, pitch = 1.05 } = {}) {
   }
 }
 
-export function stop() {
+function stop() {
   if (canSpeak()) window.speechSynthesis.cancel();
 }
 
 // Små glada ljud via WebAudio (ingen fil behövs).
 let ctx = null;
-export function ding(kind = 'ok') {
+function ding(kind = 'ok') {
   try {
     if (typeof window === 'undefined' || !(window.AudioContext || window.webkitAudioContext)) return;
     ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
@@ -70,3 +71,8 @@ export function ding(kind = 'ok') {
     });
   } catch (e) { /* ljud är bara krydda */ }
 }
+
+  return { canSpeak, hasSwedishVoice, speak, stop, ding };
+})();
+
+if (typeof module !== 'undefined') module.exports = Speech;

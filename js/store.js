@@ -1,9 +1,11 @@
 // Läsresan – lagring och ren logik (inga DOM-beroenden, testbar i node).
+// Vanligt skript (ingen ES-modul) så att appen kan öppnas direkt från disk.
+const Store = (() => {
 
-export const KEY = 'lasresan-v2';
-export const V1_KEY = 'lasresan-site-v1';
+const KEY = 'lasresan-v2';
+const V1_KEY = 'lasresan-site-v1';
 
-export function emptyState() {
+function emptyState() {
   return {
     version: 2,
     name: '',
@@ -19,7 +21,7 @@ export function emptyState() {
 // v1 hade fyra "veckor"; de mappas till närmaste nivå i v2.
 const V1_WEEK_TO_LEVEL = ['stol', 'kanin', 'solros', 'text'];
 
-export function migrateV1(raw) {
+function migrateV1(raw) {
   const out = emptyState();
   if (!raw || typeof raw !== 'object') return out;
   const attempts = Array.isArray(raw.attempts) ? raw.attempts : [];
@@ -36,7 +38,7 @@ export function migrateV1(raw) {
   return out;
 }
 
-export function load(storage) {
+function load(storage) {
   try {
     const raw = storage.getItem(KEY);
     if (raw) {
@@ -50,13 +52,13 @@ export function load(storage) {
   return emptyState();
 }
 
-export function save(storage, state) {
+function save(storage, state) {
   try { storage.setItem(KEY, JSON.stringify(state)); return true; } catch (e) { return false; }
 }
 
 // ---- Urval ----
 
-export function shuffle(arr, rng = Math.random) {
+function shuffle(arr, rng = Math.random) {
   const a = arr.slice();
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(rng() * (i + 1));
@@ -66,7 +68,7 @@ export function shuffle(arr, rng = Math.random) {
 }
 
 // Senaste resultat per ord (nyast först) inom en nivå.
-export function historyByWord(attempts, levelId) {
+function historyByWord(attempts, levelId) {
   const map = new Map();
   const sorted = attempts.filter(a => a.level === levelId).slice().sort((x, y) => y.ts - x.ts);
   for (const a of sorted) {
@@ -78,7 +80,7 @@ export function historyByWord(attempts, levelId) {
 
 // Ord som behöver repeteras: senaste läsningen krävde hjälp, eller ordet har
 // bara lästs korrekt själv en gång efter en miss (bekräftas en gång till).
-export function repeatQueue(attempts, levelId, levelWords, max = 6) {
+function repeatQueue(attempts, levelId, levelWords, max = 6) {
   const hist = historyByWord(attempts, levelId);
   const out = [];
   for (const w of levelWords) {
@@ -93,7 +95,7 @@ export function repeatQueue(attempts, levelId, levelWords, max = 6) {
 }
 
 // Nya ord först, sedan de som övats för längst sedan.
-export function pickWords(levelWords, attempts, levelId, n, exclude = [], rng = Math.random) {
+function pickWords(levelWords, attempts, levelId, n, exclude = [], rng = Math.random) {
   const hist = historyByWord(attempts, levelId);
   const ex = new Set(exclude.map(w => (typeof w === 'string' ? w : w.w)));
   const fresh = [], old = [];
@@ -112,14 +114,14 @@ export function pickWords(levelWords, attempts, levelId, n, exclude = [], rng = 
 
 const DISTRACTOR_POOL = ['a','b','d','e','f','g','h','i','k','l','m','n','o','p','r','s','t','u','v','å','ä','ö'];
 
-export function spellingTiles(parts, rng = Math.random, distractors = 2) {
+function spellingTiles(parts, rng = Math.random, distractors = 2) {
   const used = new Set(parts.map(p => p.toLowerCase()));
   const pool = DISTRACTOR_POOL.filter(c => !used.has(c));
   const extra = shuffle(pool, rng).slice(0, distractors);
   return shuffle([...parts, ...extra], rng);
 }
 
-export function checkSpelling(tiles, word) {
+function checkSpelling(tiles, word) {
   const answer = tiles.join('');
   if (answer === word) return { ok: true, firstWrong: -1 };
   let i = 0;
@@ -132,17 +134,17 @@ export function checkSpelling(tiles, word) {
 const DAY = 86400000;
 function dayKey(ts) { const d = new Date(ts); return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`; }
 
-export function weekMinutes(sessions, now = Date.now()) {
+function weekMinutes(sessions, now = Date.now()) {
   const from = now - 7 * DAY;
   return sessions.filter(s => s.ts >= from).reduce((sum, s) => sum + (s.minutes || 0), 0);
 }
 
-export function totalMinutes(sessions) {
+function totalMinutes(sessions) {
   return sessions.reduce((sum, s) => sum + (s.minutes || 0), 0);
 }
 
 // Antal dagar i rad med minst ett pass, räknat bakåt från idag (eller igår).
-export function streakDays(sessions, now = Date.now()) {
+function streakDays(sessions, now = Date.now()) {
   const days = new Set(sessions.map(s => dayKey(s.ts)));
   if (days.size === 0) return 0;
   let cursor = now;
@@ -155,7 +157,7 @@ export function streakDays(sessions, now = Date.now()) {
   return n;
 }
 
-export function levelStats(attempts, levelId) {
+function levelStats(attempts, levelId) {
   const a = attempts.filter(x => x.level === levelId);
   const self = a.filter(x => x.result === 'self').length;
   const help = a.filter(x => x.result === 'help').length;
@@ -163,7 +165,7 @@ export function levelStats(attempts, levelId) {
 }
 
 // Ord som oftast behövt hjälp (senaste resultat ej 'self'), över alla nivåer.
-export function troubleWords(attempts, max = 12) {
+function troubleWords(attempts, max = 12) {
   const byWord = new Map();
   for (const a of attempts.slice().sort((x, y) => y.ts - x.ts)) {
     const k = `${a.level}:${a.word}`;
@@ -174,7 +176,7 @@ export function troubleWords(attempts, max = 12) {
 }
 
 // Enkelt mål: nivån är "klar" när 80 % av orden lästs korrekt själv senast.
-export function levelMastery(attempts, levelId, levelWords) {
+function levelMastery(attempts, levelId, levelWords) {
   const hist = historyByWord(attempts, levelId);
   let mastered = 0;
   for (const w of levelWords) {
@@ -184,7 +186,7 @@ export function levelMastery(attempts, levelId, levelWords) {
   return { mastered, total: levelWords.length, pct: levelWords.length ? Math.round(100 * mastered / levelWords.length) : 0 };
 }
 
-export function toCsv(state) {
+function toCsv(state) {
   const esc = v => `"${String(v).replace(/"/g, '""')}"`;
   const lines = ['Typ,Datum,Nivå,Ord,Resultat'];
   for (const a of state.attempts) lines.push(['läsning', new Date(a.ts).toISOString().slice(0, 10), a.level, a.word, a.result].map(esc).join(','));
@@ -193,3 +195,8 @@ export function toCsv(state) {
   for (const s of state.sessions) lines.push(['pass', new Date(s.ts).toISOString().slice(0, 10), s.level, `${s.minutes} min`, `${s.self}/${s.words}`].map(esc).join(','));
   return '﻿' + lines.join('\r\n');
 }
+
+  return { KEY, V1_KEY, emptyState, migrateV1, load, save, shuffle, historyByWord, repeatQueue, pickWords, spellingTiles, checkSpelling, weekMinutes, totalMinutes, streakDays, levelStats, troubleWords, levelMastery, toCsv };
+})();
+
+if (typeof module !== 'undefined') module.exports = Store;
